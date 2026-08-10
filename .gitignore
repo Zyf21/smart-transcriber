@@ -1,0 +1,24 @@
+# Gradle & Build output
+.gradle/
+build/
+bin/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA workspace
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# Secrets & Local Configs (во всех подмодулях)
+*.env
+**/*.env
+**/application-local.yml
+
+# OS generated files
+.DS_Store
+Thumbs.db
