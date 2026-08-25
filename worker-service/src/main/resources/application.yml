@@ -5,40 +5,57 @@ spring:
   application:
     name: worker-service
 
-  data:
-    redis:
-      host: ${SPRING_DATA_REDIS_HOST:localhost}
-      port: ${SPRING_DATA_REDIS_PORT:6379}
-
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
       group-id: worker-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
   ai:
     openai:
       api-key: ${GROQ_API_KEY:placeholder}
       base-url: https://api.groq.com/openai/v1
-      chat:
-        options:
-          model: llama-3.3-70b-versatile
       audio:
         transcription:
-          options:
-            model: whisper-large-v3
+          response-format: json
+          model: whisper-large-v3
 
 app:
+  ai:
+    text-provider: ${TEXT_AI_PROVIDER:gemini}   # groq | gemini
+    groq:
+      api-key: ${GROQ_API_KEY:placeholder}
+      base-url: https://api.groq.com/openai/v1
+      chat-model: openai/gpt-oss-20b
+    gemini:
+      api-key: ${GEMINI_API_KEY:placeholder}
+      base-url: https://generativelanguage.googleapis.com/v1beta/openai
+      chat-model: gemini-3.6-flash
+
   minio:
     endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
     access-key: ${MINIO_ACCESS_KEY:placeholder}
     secret-key: ${MINIO_SECRET_KEY:placeholder}
-    bucket-raw: raw-audio
-    bucket-processed: processed-audio
+
+  kafka:
+    topics:
+      audio-uploaded: audio-uploaded
+      audio-processing-result: audio-processing-results
+
+  audio-compression:
+    max-output-size-bytes: 25000000
+    target-sample-rate-hz: 16000
+    min-bitrate-kbps: 16
+    max-bitrate-kbps: 64
+    bitrate-safety-factor: 0.9
+
+  audio-processing:
+    max-question-extraction-tokens: 7000
 
 logging:
   level:
