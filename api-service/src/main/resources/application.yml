@@ -34,6 +34,16 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: api-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  servlet:
+    multipart:
+      max-file-size: 150MB
+      max-request-size: 150MB
 
 app:
   minio:
@@ -41,6 +51,38 @@ app:
     access-key: ${MINIO_ACCESS_KEY:placeholder}
     secret-key: ${MINIO_SECRET_KEY:placeholder}
     bucket-raw: raw-audio
+
+  upload:
+    max-file-size-bytes: 157286400
+    allowed-content-types:
+      - audio/mpeg
+      - audio/wav
+      - audio/x-wav
+      - audio/mp4
+      - audio/x-m4a
+      - audio/aac
+      - audio/x-aac
+      - audio/ogg
+      - audio/webm
+    allowed-extensions:
+      - mp3
+      - wav
+      - m4a
+      - aac
+      - ogg
+    stale-pending-threshold-minutes: 15
+    cleanup-interval-ms: 300000
+
+  kafka:
+    topics:
+      audio-uploaded: audio-uploaded
+      audio-processing-result: audio-processing-results
+
+  outbox:
+    publish-interval-ms: 5000
+
+  cache:
+    audio-upload-ttl-hours: 24
 
 logging:
   level:
